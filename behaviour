@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Behaviour Incident Log</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f7f6f2;
+      --surface: #ffffff;
+      --border: rgba(0,0,0,0.1);
+      --border-med: rgba(0,0,0,0.18);
+      --text-primary: #1a1a18;
+      --text-secondary: #5a5a56;
+      --text-tertiary: #9a9a94;
+      --radius-md: 8px;
+      --radius-lg: 14px;
+      --font-sans: 'DM Sans', sans-serif;
+      --font-serif: 'DM Serif Display', serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #16161a;
+        --surface: #1f1f24;
+        --border: rgba(255,255,255,0.1);
+        --border-med: rgba(255,255,255,0.18);
+        --text-primary: #f0efe9;
+        --text-secondary: #a8a8a0;
+        --text-tertiary: #686860;
+      }
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .header-eyebrow {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 0.75rem;
+    }
+    .header-title {
+      font-family: var(--font-serif);
+      font-size: clamp(26px, 6vw, 36px);
+      color: var(--text-primary);
+      line-height: 1.15;
+      margin-bottom: 0.6rem;
+    }
+    .header-sub {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    .header-rule {
+      width: 40px;
+      height: 1.5px;
+      background: var(--text-tertiary);
+      margin: 1.25rem auto 0;
+      opacity: 0.4;
+      border: none;
+    }
+
+    /* Section cards */
+    .section { margin-bottom: 1.25rem; }
+
+    .section-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.25rem 1.1rem;
+      transition: border-color 0.15s;
+    }
+    .section-card:focus-within { border-color: var(--border-med); }
+
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+    .section-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 16px;
+    }
+    .icon-meta   { background: #E1F5EE; color: #0F6E56; }
+    .icon-ante   { background: #EEEDFE; color: #534AB7; }
+    .icon-beh    { background: #FAEEDA; color: #854F0B; }
+    .icon-cons   { background: #FAECE7; color: #993C1D; }
+    .icon-note   { background: #E6F1FB; color: #185FA5; }
+
+    @media (prefers-color-scheme: dark) {
+      .icon-meta   { background: #085041; color: #9FE1CB; }
+      .icon-ante   { background: #3C3489; color: #CECBF6; }
+      .icon-beh    { background: #633806; color: #FAC775; }
+      .icon-cons   { background: #712B13; color: #F5C4B3; }
+      .icon-note   { background: #0C447C; color: #B5D4F4; }
+    }
+
+    .section-title { font-size: 14px; font-weight: 500; color: var(--text-primary); line-height: 1.3; }
+    .section-desc  { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+    /* Form elements */
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+      margin-top: 14px;
+    }
+    label:first-of-type { margin-top: 0; }
+
+    input[type=text],
+    input[type=date],
+    input[type=time],
+    select,
+    textarea,
+    input[type=email] {
+      width: 100%;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--bg);
+      border: 0.5px solid var(--border-med);
+      border-radius: var(--radius-md);
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--text-secondary);
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+    }
+    textarea { resize: vertical; min-height: 90px; line-height: 1.65; }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239a9a94' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
+
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .divider { height: 0.5px; background: var(--border); margin: 1rem 0; }
+
+    .char-count { font-size: 11px; color: var(--text-tertiary); text-align: right; margin-top: 4px; }
+
+    /* Severity buttons */
+    .sev-row { display: flex; gap: 8px; }
+    .sev-btn {
+      flex: 1;
+      padding: 9px 8px;
+      border: 0.5px solid var(--border-med);
+      border-radius: var(--radius-md);
+      background: var(--bg);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.12s;
+      text-align: center;
+    }
+    .sev-btn:hover { border-color: var(--text-tertiary); }
+    .sev-btn.low  { background: #EAF3DE; border-color: #3B6D11; color: #27500A; font-weight: 500; }
+    .sev-btn.med  { background: #FAEEDA; border-color: #854F0B; color: #633806; font-weight: 500; }
+    .sev-btn.high { background: #FCEBEB; border-color: #A32D2D; color: #501313; font-weight: 500; }
+
+    /* Behaviour type checkboxes */
+    .behaviour-types {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      background: var(--bg);
+      border: 0.5px solid var(--border-med);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.12s;
+      font-size: 13px;
+      margin-top: 0;
+    }
+    .checkbox-label:hover {
+      border-color: var(--text-tertiary);
+    }
+    .checkbox-label input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+      cursor: pointer;
+    }
+    .checkbox-label input[type="checkbox"]:checked + span {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    /* Submit button */
+    .submit-wrap { margin-top: 1.75rem; }
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--text-primary);
+      color: var(--surface);
+      border: none;
+      border-radius: var(--radius-lg);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: opacity 0.15s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .submit-btn:hover  { opacity: 0.88; }
+    .submit-btn:active { transform: scale(0.99); opacity: 0.75; }
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .privacy-note {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    /* Success screen */
+    #successWrap {
+      display: none;
+      text-align: center;
+      padding: 4rem 1rem;
+      animation: fadeIn 0.4s ease;
+    }
+    .success-icon { font-size: 52px; color: #0F6E56; margin-bottom: 1.25rem; }
+    .success-title { font-family: var(--font-serif); font-size: 28px; color: var(--text-primary); margin-bottom: 0.6rem; }
+    .success-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 360px; margin: 0 auto 2rem; }
+    .reset-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 24px;
+      border: 0.5px solid var(--border-med);
+      border-radius: var(--radius-lg);
+      background: transparent;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .reset-btn:hover { background: var(--surface); color: var(--text-primary); }
+
+    @keyframes fadeIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: none; } }
+
+    /* Required star */
+    .req { color: #A32D2D; margin-left: 2px; }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- Form -->
+  <div id="formWrap">
+
+    <div class="header">
+      <span class="header-eyebrow">Confidential Record</span>
+      <h1 class="header-title">Behaviour Incident Log</h1>
+      <p class="header-sub">Please answer each section as honestly as you can. Your responses are kept private and will be reviewed with your Behaviour Support Practitioner.</p>
+      <hr class="header-rule">
+    </div>
+
+    <!-- Section 1: Who & When -->
+    <div class="section">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-icon icon-meta" aria-hidden="true"><i class="ti ti-id-badge"></i></div>
+          <div>
+            <div class="section-title">Who &amp; When</div>
+            <div class="section-desc">Basic details about this entry</div>
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label for="entryDate">Date <span class="req">*</span></label>
+            <input type="date" id="entryDate">
+          </div>
+          <div>
+            <label for="entryTime">Time</label>
+            <input type="time" id="entryTime">
+          </div>
+        </div>
+        <label for="personName">Your name <span class="req">*</span></label>
+        <input type="text" id="personName" placeholder="First name or initials">
+      </div>
+    </div>
+
+    <!-- Section 2: Antecedent -->
+    <div class="section">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-icon icon-ante" aria-hidden="true"><i class="ti ti-timeline"></i></div>
+          <div>
+            <div class="section-title">What led up to it?</div>
+            <div class="section-desc">Events, feelings, or situations that came before</div>
+          </div>
+        </div>
+        <label for="antecedent">Describe what was happening before the behaviour occurred</label>
+        <textarea id="antecedent" placeholder="e.g. I was feeling stressed after a difficult conversation, it was late in the day and I hadn't eaten, I felt overwhelmed and couldn't see a way out…" maxlength="500"></textarea>
+        <div class="char-count" id="ante-count">0 / 500</div>
+        <div class="divider"></div>
+        <label for="setting">Where were you?</label>
+        <input type="text" id="setting" placeholder="e.g. at home, at work, in public, online…">
+      </div>
+    </div>
+
+    <!-- Section 3: Behaviour -->
+    <div class="section">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-icon icon-beh" aria-hidden="true"><i class="ti ti-activity"></i></div>
+          <div>
+            <div class="section-title">What was the behaviour?</div>
+            <div class="section-desc">Describe what you did or said as specifically as you can</div>
+          </div>
+        </div>
+        <label for="behaviour">Describe the behaviour <span class="req">*</span></label>
+        <textarea id="behaviour" placeholder="e.g. I raised my voice, I left the room without warning, I sent a message I regretted, I avoided the situation entirely…" maxlength="500"></textarea>
+        <div class="char-count" id="beh-count">0 / 500</div>
+        
+        <div class="divider"></div>
+        <label>Behaviour type <span class="req">*</span></label>
+        <div class="behaviour-types">
+          <label class="checkbox-label">
+            <input type="checkbox" id="verbal" name="behaviourType" value="Verbal Aggression">
+            <span>Verbal Aggression</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="physical" name="behaviourType" value="Physical Aggression">
+            <span>Physical Aggression</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="absconding" name="behaviourType" value="Absconding">
+            <span>Absconding</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="property" name="behaviourType" value="Property Damage">
+            <span>Property Damage</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="selfinjury" name="behaviourType" value="Self-Injurious Behaviour">
+            <span>Self-Injurious Behaviour</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="noncompliance" name="behaviourType" value="Noncompliance/Refusal">
+            <span>Noncompliance/Refusal</span>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+        <label>How intense was it?</label>
+        <div class="sev-row" id="sevRow">
+          <button class="sev-btn" type="button" data-sev="mild" onclick="setSev(this,'low')">Mild</button>
+          <button class="sev-btn" type="button" data-sev="moderate" onclick="setSev(this,'med')">Moderate</button>
+          <button class="sev-btn" type="button" data-sev="severe" onclick="setSev(this,'high')">Severe</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Consequences -->
+    <div class="section">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-icon icon-cons" aria-hidden="true"><i class="ti ti-arrow-wave-right-up"></i></div>
+          <div>
+            <div class="section-title">What happened after?</div>
+            <div class="section-desc">Consequences that followed the behaviour</div>
+          </div>
+        </div>
+        <label for="consequences">How did others respond? What changed as a result?</label>
+        <textarea id="consequences" placeholder="e.g. the other person walked away, the situation escalated or calmed down, I felt immediate relief, I was asked to leave…" maxlength="500"></textarea>
+        <div class="char-count" id="cons-count">0 / 500</div>
+        <div class="divider"></div>
+        <label for="selfResponse">How did you feel afterwards?</label>
+        <select id="selfResponse">
+          <option value="" disabled selected>Select how you felt…</option>
+          <option>Relieved</option>
+          <option>Regretful / ashamed</option>
+          <option>Angry</option>
+          <option>Sad</option>
+          <option>Numb / disconnected</option>
+          <option>Anxious</option>
+          <option>Calm</option>
+          <option>Confused</option>
+          <option>Proud of how I handled it</option>
+          <option>Other (describe in notes below)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Section 5: Extra comments -->
+    <div class="section">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-icon icon-note" aria-hidden="true"><i class="ti ti-notes"></i></div>
+          <div>
+            <div class="section-title">Anything else to add?</div>
+            <div class="section-desc">Extra thoughts, context, or reflections for your Behaviour Support Practitioner</div>
+          </div>
+        </div>
+        <label for="extra">Additional comments</label>
+        <textarea id="extra" style="min-height:110px;" placeholder="Anything else you'd like your Behaviour Support Practitioner to know about this incident, how you're feeling right now, or what you think might have helped…" maxlength="1000"></textarea>
+        <div class="char-count" id="extra-count">0 / 1000</div>
+      </div>
+    </div>
+
+    <div class="submit-wrap">
+      <button class="submit-btn" id="submitBtn" type="button" onclick="submitForm()">
+        <i class="ti ti-send" aria-hidden="true"></i> Submit entry
+      </button>
+      <p class="privacy-note"><i class="ti ti-lock" style="font-size:12px;" aria-hidden="true"></i> Your responses are private and confidential</p>
+    </div>
+
+  </div><!-- /formWrap -->
+
+  <!-- Success screen -->
+  <div id="successWrap">
+    <div class="success-icon"><i class="ti ti-circle-check" aria-hidden="true"></i></div>
+    <h2 class="success-title">Entry recorded</h2>
+    <p class="success-sub">Thank you for taking the time to complete this. Your Behaviour Support Practitioner will review it at your next session. You can close this page now.</p>
+    <button class="reset-btn" type="button" onclick="resetForm()">
+      <i class="ti ti-plus" aria-hidden="true"></i> Log another entry
+    </button>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+  // Auto-fill date & time
+  const pad = n => String(n).padStart(2,'0');
+  const now = new Date();
+  document.getElementById('entryDate').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  document.getElementById('entryTime').value = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+  // Severity selector
+  let selectedSev = '';
+  function setSev(btn, cls) {
+    document.querySelectorAll('.sev-btn').forEach(b => b.className = 'sev-btn');
+    btn.classList.add(cls);
+    selectedSev = btn.dataset.sev;
+  }
+
+  // Character counters
+  function setupCounter(inputId, countId, max) {
+    const el = document.getElementById(inputId);
+    const out = document.getElementById(countId);
+    el.addEventListener('input', () => {
+      out.textContent = `${el.value.length} / ${max}`;
+    });
+  }
+  setupCounter('antecedent',  'ante-count',  500);
+  setupCounter('behaviour',   'beh-count',   500);
+  setupCounter('consequences','cons-count',  500);
+  setupCounter('extra',       'extra-count', 1000);
+
+  // Get selected behaviour types
+  function getSelectedBehaviours() {
+    const checkboxes = document.querySelectorAll('input[name="behaviourType"]:checked');
+    return Array.from(checkboxes).map(cb => cb.value);
+  }
+
+  // Submit
+  function submitForm() {
+    const name = document.getElementById('personName').value.trim();
+    const date = document.getElementById('entryDate').value;
+    const beh  = document.getElementById('behaviour').value.trim();
+    const behaviourTypes = getSelectedBehaviours();
+
+    if (!name || !date || !beh || behaviourTypes.length === 0) {
+      alert('Please fill in your name, date, behaviour description, and select at least one behaviour type before submitting.');
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="ti ti-send" aria-hidden="true"></i> Sending...';
+
+    // Compile all form data
+    const time   = document.getElementById('entryTime').value;
+    const ante   = document.getElementById('antecedent').value.trim();
+    const set    = document.getElementById('setting').value.trim();
+    const cons   = document.getElementById('consequences').value.trim();
+    const feel   = document.getElementById('selfResponse').value;
+    const extra  = document.getElementById('extra').value.trim();
+
+    // Create JSON payload
+    const payload = {
+      email: 'Amina.ametovskaa@gmail.com',
+      name: name,
+      date: date,
+      time: time || 'Not recorded',
+      antecedent: ante || 'Not filled in',
+      setting: set || 'Not filled in',
+      behaviour: beh,
+      behaviourTypes: behaviourTypes.join(', '),
+      intensity: selectedSev || 'Not selected',
+      consequences: cons || 'Not filled in',
+      felt: feel || 'Not selected',
+      extra: extra || 'None'
+    };
+
+    fetch('https://formspree.io/f/mojryekw', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        name: `Behaviour Log: ${name}`,
+        email: 'Amina.ametovskaa@gmail.com',
+        message: `
+Date: ${date}
+Time: ${time || 'Not recorded'}
+Name: ${name}
+
+--- ANTECEDENT (What led up to it) ---
+${ante || 'Not filled in'}
+Setting: ${set || 'Not filled in'}
+
+--- BEHAVIOUR ---
+Description: ${beh}
+Type(s): ${behaviourTypes.join(', ')}
+Intensity: ${selectedSev || 'Not selected'}
+
+--- CONSEQUENCES ---
+${cons || 'Not filled in'}
+Felt afterwards: ${feel || 'Not selected'}
+
+--- ADDITIONAL COMMENTS ---
+${extra || 'None'}
+        `
+      })
+    })
+    .then(response => {
+      if (response.ok) {
+        document.getElementById('formWrap').style.display = 'none';
+        document.getElementById('successWrap').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        throw new Error('Response not ok');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="ti ti-send" aria-hidden="true"></i> Submit entry';
+      alert('There was an issue sending your entry. Please try again.');
+    });
+  }
+
+  // Reset
+  function resetForm() {
+    ['personName','antecedent','setting','behaviour','consequences','extra'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('selfResponse').selectedIndex = 0;
+
+    document.querySelectorAll('input[name="behaviourType"]').forEach(cb => cb.checked = false);
+
+    const n = new Date();
+    document.getElementById('entryDate').value = `${n.getFullYear()}-${pad(n.getMonth()+1)}-${pad(n.getDate())}`;
+    document.getElementById('entryTime').value = `${pad(n.getHours())}:${pad(n.getMinutes())}`;
+
+    document.querySelectorAll('.sev-btn').forEach(b => b.className = 'sev-btn');
+    selectedSev = '';
+
+    [['ante-count',500],['beh-count',500],['cons-count',500],['extra-count',1000]]
+      .forEach(([id, max]) => { document.getElementById(id).textContent = `0 / ${max}`; });
+
+    document.getElementById('successWrap').style.display = 'none';
+    document.getElementById('formWrap').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>
